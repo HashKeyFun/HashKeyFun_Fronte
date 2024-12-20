@@ -1,95 +1,75 @@
+"use client";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
-import styles from "./page.module.css";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const imageRef = useRef<HTMLImageElement>(null);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
+  useEffect(() => {
+    const rotateImage = () => {
+      if (imageRef.current) {
+        const randomAngle = Math.random() * 360;
+        imageRef.current.style.transform = `rotate(${randomAngle}deg)`;
+      }
+      setTimeout(rotateImage, 100);
+    };
+    rotateImage();
+  }, []);
+  return (
+    <div>
+      <header className="header">
+        <h1 className="title">🌕 HashKey MemeCoin 🚀</h1>
+        <p className="subtitle">
+          "The most meaningless yet lovable coin in the universe"
+        </p>
+      </header>
+
+      <main>
+        <section className="hero">
+          <Image
+            ref={imageRef}
+            src="/brand-black-logo1.png"
+            alt="HashKey Mascot"
+            className="hero-img"
+            width={1000}
+            height={500}
+          />
+          <h2>Buy now, laugh or cry later, or regret forever!</h2>
+          <button className="cta-button" onClick={() => window.open("/market")}>
+            🚀 Take me to HashKey!
+          </button>
+        </section>
+
+        <section className="features">
+          <h2 className="section-title">Why Choose HashKey MemeCoin?</h2>
+          <div className="feature-list">
+            <div className="feature-item">
+              <img src="https://placebear.com/100/100" alt="Feature 1" />
+              <h3>Absolutely Trustworthy</h3>
+              <p>Our founder’s words: "Trust me, bro."</p>
+            </div>
+            <div className="feature-item">
+              <img src="https://placebeard.it/100/100" alt="Feature 2" />
+              <h3>Guaranteed Moonshot</h3>
+              <p>*Disclaimer: Moonshots may vary.</p>
+            </div>
+            <div className="feature-item">
+              <img src="https://baconmockup.com/100/100" alt="Feature 3" />
+              <h3>Memes are Life</h3>
+              <p>Buy HashKey MemeCoin, gain infinite laughs!</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="roadmap">
+          <h2>HashKey MemeCoin Roadmap</h2>
+          <ul>
+            <li>📈 Phase 1: Hype Train Boarding</li>
+            <li>🐸 Phase 2: Memes Take Over the World</li>
+            <li>🌑 Phase 3: Rug Pull (just kidding... or are we?)</li>
+          </ul>
+        </section>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

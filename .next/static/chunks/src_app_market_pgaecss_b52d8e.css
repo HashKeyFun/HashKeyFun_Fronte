@@ -1,0 +1,119 @@
+/* [project]/src/app/market/pgaecss.css [app-client] (css) */
+body {
+  font-family: Comic Sans MS, Comic Sans, cursive;
+  background: linear-gradient(45deg, #f0f, #0ff);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  text-align: center;
+  padding: 20px;
+}
+
+.title {
+  font-size: 3rem;
+  color: #ff0;
+  animation: 1s infinite alternate flicker;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #000;
+}
+
+.exchange {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+}
+
+.coin-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.coin-item {
+  text-align: center;
+  background: #ffffff1a;
+  border: 2px dashed #fff;
+  border-radius: 10px;
+  padding: 10px;
+  width: 150px;
+  animation: 2s ease-in-out infinite bounce;
+  transition: transform .2s;
+}
+
+.coin-item:hover {
+  transform: scale(1.1);
+}
+
+.coin-image {
+  border-radius: 50%;
+  animation: 3s linear infinite spin, 5s ease-in-out infinite float;
+}
+
+.coin-name {
+  font-size: 1.2rem;
+  margin: 10px 0 5px;
+}
+
+.coin-price {
+  font-size: 1rem;
+  color: #0f0;
+}
+
+.change {
+  color: red;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: .8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: .6;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/*# sourceMappingURL=src_app_market_pgaecss_b52d8e.css.map*/
