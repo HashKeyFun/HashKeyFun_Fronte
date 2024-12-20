@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import Payment from "../../../views/StupidCoin/Components/Payment";
 import "./pgaecss.css";
 
 ChartJS.register(
@@ -24,126 +25,82 @@ ChartJS.register(
   Legend
 );
 
-const coins = [
-  { id: 1, name: "MemeCoin Gold", price: 100 },
-  { id: 2, name: "MemeCoin Silver", price: 50 },
-  { id: 3, name: "MemeCoin Bronze", price: 25 },
-];
+export default function HashKeyExchange() {
+  const [wallet, setWallet] = useState<number>(1000); // 사용자의 초기 지갑 금액
+  const [owned, setOwned] = useState<number>(0); // 보유한 HashKey Coin 개수
+  const [price, setPrice] = useState<number>(100); // HashKey Coin의 현재 가격
+  const [priceHistory, setPriceHistory] = useState<number[]>([]); // 가격 변동 기록
 
-export default function Exchange() {
-  const [wallet, setWallet] = useState<number>(1000);
-  const [portfolio, setPortfolio] = useState<{ [key: string]: number }>({});
-  const [prices, setPrices] = useState<number[]>(
-    coins.map((coin) => coin.price)
-  );
-  const [priceHistory, setPriceHistory] = useState<number[][]>(
-    coins.map(() => [])
-  );
-
+  // 가격 변동 및 기록 관리
   useEffect(() => {
     const interval = setInterval(() => {
-      setPrices((prevPrices) => {
-        const updatedPrices = prevPrices.map((price) =>
-          Math.max(1, price + Math.floor(Math.random() * 20 - 10))
-        );
-        setPriceHistory(
-          (prevHistory) =>
-            prevHistory.map((history, index) => [
-              ...history.slice(-19),
-              updatedPrices[index],
-            ]) // 최대 20개 데이터 유지
-        );
-        return updatedPrices;
-      });
+      setPrice((prevPrice) =>
+        Math.max(1, prevPrice + Math.floor(Math.random() * 20 - 10))
+      ); // 가격 변동 범위: ±10
+      setPriceHistory((prevHistory) => [...prevHistory.slice(-19), price]); // 최대 20개의 기록 유지
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [price]);
 
-  const buyCoin = (coinId: number, coinPrice: number) => {
-    if (wallet >= coinPrice) {
-      setWallet(wallet - coinPrice);
-      setPortfolio((prevPortfolio) => ({
-        ...prevPortfolio,
-        [coinId]: (prevPortfolio[coinId] || 0) + 1,
-      }));
+  // 구매 함수
+  const buyCoin = () => {
+    if (wallet >= price) {
+      setWallet(wallet - price);
+      setOwned(owned + 1);
     } else {
       alert("Not enough funds!");
     }
   };
 
-  const sellCoin = (coinId: number, coinPrice: number) => {
-    if (portfolio[coinId] > 0) {
-      setWallet(wallet + coinPrice);
-      setPortfolio((prevPortfolio) => ({
-        ...prevPortfolio,
-        [coinId]: prevPortfolio[coinId] - 1,
-      }));
+  // 판매 함수
+  const sellCoin = () => {
+    if (owned > 0) {
+      setWallet(wallet + price);
+      setOwned(owned - 1);
     } else {
-      alert("You don't own this coin!");
+      alert("You don't own any HashKey Coin!");
     }
   };
 
   return (
-    <div className="exchange">
+    <div className="hashkey-exchange">
       <header className="header">
-        <h1 className="title">🚀 MemeCoin Trading Platform</h1>
+        <h1 className="title">🚀 HashKey Coin Exchange</h1>
         <p className="subtitle">Your Wallet: ${wallet.toFixed(2)}</p>
       </header>
 
       <main className="main-content">
         {/* 왼쪽: 차트 */}
         <section className="chart-section">
-          {coins.map((coin, index) => (
-            <div key={coin.id} className="chart-item">
-              <h3>{coin.name} Price Chart</h3>
-              <Line
-                data={{
-                  labels: Array(priceHistory[index]?.length || 0).fill(""),
-                  datasets: [
-                    {
-                      label: `${coin.name} Price`,
-                      data: priceHistory[index],
-                      borderColor: "rgba(255, 99, 132, 1)",
-                      backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    },
-                  ],
-                }}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: { display: false },
-                  },
-                  scales: {
-                    x: { display: false },
-                  },
-                }}
-              />
-            </div>
-          ))}
+          <h3>HashKey Coin Price Chart</h3>
+          <Line
+            data={{
+              labels: Array(priceHistory.length).fill(""),
+              datasets: [
+                {
+                  label: "Price",
+                  data: priceHistory,
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  backgroundColor: "rgba(54, 162, 235, 0.2)",
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { display: false },
+              },
+              scales: {
+                x: { display: false },
+              },
+            }}
+          />
         </section>
 
         {/* 오른쪽: 거래 인터페이스 */}
         <section className="trade-section">
-          <div className="coin-list">
-            {coins.map((coin, index) => (
-              <div key={coin.id} className="coin-item">
-                <h3>{coin.name}</h3>
-                <p>Price: ${prices[index]}</p>
-                <p>Owned: {portfolio[coin.id] || 0}</p>
-                <button
-                  className="buy-button"
-                  onClick={() => buyCoin(coin.id, prices[index])}>
-                  Buy
-                </button>
-                <button
-                  className="sell-button"
-                  onClick={() => sellCoin(coin.id, prices[index])}>
-                  Sell
-                </button>
-              </div>
-            ))}
-          </div>
+          <Payment />
         </section>
       </main>
     </div>
