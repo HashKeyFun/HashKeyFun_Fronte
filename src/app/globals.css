@@ -144,18 +144,34 @@ marquee {
   }
 }
 .marquee {
+  display: flex;
   background-color: #000;
-  height: 35px;
+  height: 80px;
   overflow: hidden;
   position: relative;
   white-space: nowrap;
+  width: 100%; 
 }
 
 .marquee span {
   display: inline-block;
-  font-size: 20px;
-  padding-left: 100%;
+  font-size: 65px;
+
   animation: marquee 15s linear infinite;
+}
+
+.move {
+  height: 100%;
+  display: flex;
+  font-size: 20;
+  animation: marquee 15s linear infinite;
+  justify-content: center;
+  align-items: center;
+  gap : 20px;
+  button{
+    height: 50%;
+  }
+  
 }
 
 @keyframes marquee {
