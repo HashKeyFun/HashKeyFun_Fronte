@@ -2,13 +2,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import "./pgaecss.css";
-import { ethers } from "ethers";
+import { ethers } from "ethers"; // ethers 모듈 임포트
+import axios from "axios";
 
 export default function MemeCoinCreation() {
   const imageRef = useRef<HTMLImageElement>(null);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [isPurchaseVisible, setIsPurchaseVisible] = useState(false);
   const [purchaseAmount, setPurchaseAmount] = useState<number | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const rotateImage = () => {
@@ -24,15 +26,42 @@ export default function MemeCoinCreation() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const fileURL = URL.createObjectURL(file);
       setPreviewSrc(fileURL);
     } else {
+      setImageFile(null);
       setPreviewSrc(null);
     }
   };
 
-  const handlePurchase = () => {
-    setIsPurchaseVisible(true);
+  const handlePurchase = async () => {
+    if (!imageFile) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    try {
+      // FormData로 파일과 데이터를 묶어 전송
+      const formData = new FormData();
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}:5000/file/image/upload`;
+
+      if (!apiUrl) {
+        throw new Error("API URL is not defined.");
+      }
+
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // multipart/form-data로 전송
+        },
+      });
+      setIsPurchaseVisible(true);
+      console.log("Image and data uploaded successfully:", response.data);
+      alert("Transaction confirmed and image uploaded successfully!");
+    } catch (error) {
+      console.error("Error during purchase and image upload:", error);
+      alert("Transaction failed. Please try again.");
+    }
   };
 
   const handleCloseModal = () => {
@@ -51,15 +80,15 @@ export default function MemeCoinCreation() {
     }
 
     try {
-      // 요청된 MetaMask 계정 가져오기
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum); // BrowserProvider 사용
       await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
+      const signer = await provider.getSigner(); // await을 사용하여 signer 객체를 해결
 
-      // 거래 수행 (여기서는 0.01 ETH를 전송하는 예시로 작성)
+      // 트랜잭션 수행
       const tx = await signer.sendTransaction({
-        to: "0xYourRecipientAddressHere", // 받는 사람 주소 (스마트 계약 주소)
-        value: ethers.utils.parseEther((purchaseAmount * 0.01).toString()), // 금액 (ETH 기준)
+        to: "0x09C75F68E9AC4d005F07db81FB5B221421341BF9", // 수신자 주소 (스마트 계약 주소)
+        value: ethers.parseEther((purchaseAmount * 0.01).toString()), // 금액 (ETH 기준)
+        gasLimit: 1000000, // 가스 한도를 충분히 설정
       });
 
       console.log("Transaction sent:", tx.hash);
