@@ -1,0 +1,237 @@
+/* globals.css */
+
+body {
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  background: linear-gradient(45deg, #ff00ff, #00ffff);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  text-align: center;
+  padding: 20px;
+  animation: rainbow-border 5s infinite linear;
+}
+
+.title {
+  font-size: 4rem;
+  text-shadow: 3px 3px 0 #000;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  margin-top: -10px;
+}
+
+.hero {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.hero-img {
+  width: 80%;
+  border: 10px dashed yellow;
+  border-radius: 20px;
+  animation: spin 3s linear infinite;}
+
+.cta-button {
+  font-size: 2rem;
+  background: #000;
+  color: #ff0;
+  border: 5px solid #fff;
+  padding: 10px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  animation: shake 5s infinite;
+}
+
+.features {
+  background: #222;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  text-decoration: underline wavy #ff0;
+}
+
+.feature-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.feature-item {
+  text-align: center;
+  max-width: 200px;
+}
+
+.feature-item img {
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.roadmap {
+  padding: 30px 20px;
+  text-align: center;
+  background: linear-gradient(90deg, #000, #444);
+  color: #fff;
+}
+
+.roadmap ul {
+  list-style: none;
+  padding: 0;
+}
+
+.roadmap li {
+  margin: 10px 0;
+}
+
+.footer {
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+
+marquee {
+  font-size: 1.2rem;
+  color: #ff0;
+}
+
+/* Animations */
+@keyframes rainbow-border {
+  0% {
+    border-color: red;
+  }
+  25% {
+    border-color: yellow;
+  }
+  50% {
+    border-color: green;
+  }
+  75% {
+    border-color: blue;
+  }
+  100% {
+    border-color: red;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-200px);
+  }
+  75% {
+    transform: translateX(200px);
+  }
+}
+
+.marquee {
+  display: flex;
+  background-color: #000;
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  width: 100%; 
+}
+
+.marquee span {
+  display: inline-block;
+  font-size: 65px;
+
+  animation: marquee 15s linear infinite;
+}
+
+.move {
+  height: 100%;
+  display: flex;
+  font-size: 20;
+  animation: marquee 15s linear infinite;
+  justify-content: center;
+  align-items: center;
+  gap : 20px;
+  button{
+    height: 50%;
+  }
+  
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+
+.cta-button {
+  font-size: 18px;
+  background-color: purple; /* 예시로 토마토 색 */
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.cta-button:hover {
+  background-color: purple; /* hover 시 색 변화 */
+}
+
+/* 반짝이는 효과 */
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 3000px;
+  height: 3000px;
+  background: linear-gradient(0deg, blue, green, red);
+  animation: shine 01s infinite;
+  z-index: 0;
+  opacity: 1;
+}
+
+.cta-button span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 반짝임 애니메이션 */
+@keyframes shine {
+  0% {
+    transform: rotate(0deg) translateX(-100%);
+  }
+  50% {
+    transform: rotate(180deg) translateX(100%);
+  }
+  100% {
+    transform: rotate(360deg) translateX(-100%);
+  }
+}

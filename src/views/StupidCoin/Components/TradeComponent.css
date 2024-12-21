@@ -1,0 +1,133 @@
+.trade-container {
+    background-color: #2e303a;
+    padding: 16px;
+    border-radius: 8px;
+    border: none;
+    color: #888;
+    display: grid;
+    gap: 16px;
+  }
+  
+  .trade-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .trade-actions {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+  }
+  
+  .buy-button {
+    flex: 1;
+    padding: 8px 12px;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #4caf50;
+    color: #fff;
+    font-size: 16px;
+  }
+  
+  .sell-button {
+    flex: 1;
+    padding: 8px 12px;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #444;
+    color: #aaa;
+  }
+  
+  .trade-options {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .switch-button,
+  .slippage-button {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: #444;
+    color: #aaa;
+  }
+  
+  .trade-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .amount-label {
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: #2e303a;
+    border-radius: 4px;
+  }
+  
+  .amount-input {
+    flex: 1;
+    height: 40px;
+    padding: 8px;
+    border: 1px solid #555;
+    background-color: transparent;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    border-radius: 4px;
+  }
+  
+  .currency-indicator {
+    position: absolute;
+    right: 8px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .currency-label {
+    color: #fff;
+    margin-right: 8px;
+  }
+  
+  .currency-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .quick-select {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  
+  .reset-button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: #444;
+    color: #aaa;
+  }
+  
+  .place-trade {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .trade-button {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    background-color: blue;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+  }
+  
