@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import "./pgaecss.css";
-import { ethers } from "ethers"; // ethers 모듈 임포트
+import { ethers } from "ethers";
+import TokenFactoryABI from "../TokenFactory.json";
 import axios from "axios";
 
 export default function MemeCoinCreation() {
@@ -11,57 +12,69 @@ export default function MemeCoinCreation() {
   const [isPurchaseVisible, setIsPurchaseVisible] = useState(false);
   const [purchaseAmount, setPurchaseAmount] = useState<number | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [coinName, setCoinName] = useState<string>("");
+  const [coinSymbol, setCoinSymbol] = useState<string>("");
+  const [coinDescription, setCoinDescription] = useState<string>("");
+
+  const TokenFactoryAddress = "0xb6Ead7E52EF0ae4225e2CF63F63669E2e6325286";
 
   useEffect(() => {
-    const rotateImage = () => {
+    const intervalId = setInterval(() => {
       if (imageRef.current) {
         const randomAngle = Math.random() * 360;
         imageRef.current.style.transform = `rotate(${randomAngle}deg)`;
       }
-      setTimeout(rotateImage, 100);
-    };
-    rotateImage();
+    }, 100);
+
+    return () => clearInterval(intervalId);
   }, []);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const fileURL = URL.createObjectURL(file);
-      setPreviewSrc(fileURL);
+    if (file && file.type.startsWith("image/")) {
+      try {
+        // Set local preview
+        setImageFile(file);
+        const fileURL = URL.createObjectURL(file);
+        setPreviewSrc(fileURL);
+
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // Upload to server
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}:5000/file/image/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        console.log("File uploaded successfully:", response.data.image_url);
+        setPreviewSrc(response.data.image_url);
+        alert("File uploaded successfully!");
+      } catch (error) {
+        console.error("File upload failed:", error);
+        alert("Failed to upload the image. Please try again.");
+      }
+    } else if (file && file.type.startsWith("video/")) {
+      alert("Video uploads are not supported yet.");
+      setImageFile(null);
+      setPreviewSrc(null);
     } else {
+      alert("Only images are allowed.");
       setImageFile(null);
       setPreviewSrc(null);
     }
   };
 
   const handlePurchase = async () => {
-    if (!imageFile) {
-      alert("Please upload an image.");
-      return;
-    }
-
-    try {
-      // FormData로 파일과 데이터를 묶어 전송
-      const formData = new FormData();
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}:5000/file/image/upload`;
-
-      if (!apiUrl) {
-        throw new Error("API URL is not defined.");
-      }
-
-      const response = await axios.post(apiUrl, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // multipart/form-data로 전송
-        },
-      });
-      setIsPurchaseVisible(true);
-      console.log("Image and data uploaded successfully:", response.data);
-      alert("Transaction confirmed and image uploaded successfully!");
-    } catch (error) {
-      console.error("Error during purchase and image upload:", error);
-      alert("Transaction failed. Please try again.");
-    }
+    setIsPurchaseVisible(true);
   };
 
   const handleCloseModal = () => {
@@ -69,38 +82,91 @@ export default function MemeCoinCreation() {
   };
 
   const handleBuy = async () => {
-    if (!purchaseAmount || purchaseAmount <= 0) {
-      alert("Please enter a valid amount to purchase.");
+    if (!coinName.trim() || !coinSymbol.trim()) {
+      alert("Please enter both coin name and symbol.");
       return;
     }
 
-    if (typeof window.ethereum === "undefined") {
-      alert("MetaMask is not installed. Please install MetaMask to continue.");
+    if (coinName.length > 32 || coinSymbol.length > 8) {
+      alert(
+        "Coin name must be less than 32 characters and symbol less than 8 characters."
+      );
+      return;
+    }
+
+    if (!window.ethereum) {
+      alert("MetaMask is not installed. Please install MetaMask.");
       return;
     }
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum); // BrowserProvider 사용
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner(); // await을 사용하여 signer 객체를 해결
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
 
-      // 트랜잭션 수행
-      const tx = await signer.sendTransaction({
-        to: "0x09C75F68E9AC4d005F07db81FB5B221421341BF9", // 수신자 주소 (스마트 계약 주소)
-        value: ethers.parseEther((purchaseAmount * 0.01).toString()), // 금액 (ETH 기준)
-        gasLimit: 1000000, // 가스 한도를 충분히 설정
-      });
+      const tokenFactory = new ethers.Contract(
+        TokenFactoryAddress,
+        TokenFactoryABI,
+        signer
+      );
 
-      console.log("Transaction sent:", tx.hash);
-      alert("Transaction sent! Waiting for confirmation...");
+      const tx = await tokenFactory.requestToken(
+        coinName.trim(),
+        coinSymbol.trim()
+      );
 
-      // 트랜잭션 확인 대기
-      await tx.wait();
-      alert("Transaction confirmed!");
+      const receipt = await tx.wait(); // Wait for the transaction to be mined
+      console.log("Transaction receipt:", receipt);
+
+      const eventAbi = [
+        "event TokenRequested(bytes32 indexed requestId, address indexed creator, string name, string symbol)",
+      ];
+      const iface = new ethers.Interface(eventAbi);
+
+      const event = receipt.logs
+        .map((log: any) => {
+          try {
+            return iface.parseLog(log); // Try to parse each log
+          } catch {
+            return null; // If parsing fails, ignore
+          }
+        })
+        .filter((log: any) => log !== null) // Remove null entries
+        .find((log: any) => log.name === "TokenRequested"); // Find the specific event
+      if (event) {
+        const requestId = event.args.requestId; // Extract requestId
+        console.log("Request ID:", requestId);
+
+        // Send the request ID, image, and description to the server
+        const apiResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}:5000/token/create`,
+          {
+            request_id: requestId,
+            image: previewSrc, // Assuming this holds the uploaded image URL
+            description: coinDescription,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("API response:", apiResponse.data);
+        alert("Token request submitted successfully!");
+      } else {
+        console.log("TokenRequested event not found.");
+        alert("Failed to retrieve request ID from the transaction.");
+      }
+
+      // Reset form fields
+      setCoinName("");
+      setCoinSymbol("");
+      setCoinDescription("");
+      setPreviewSrc(null);
       setIsPurchaseVisible(false);
-    } catch (error) {
-      console.error("Transaction failed:", error);
-      alert("Transaction failed. Please try again.");
+    } catch (error: any) {
+      console.error("Error requesting token:", error);
+      alert(`Failed to request token: ${error.message}`);
     }
   };
 
@@ -122,6 +188,8 @@ export default function MemeCoinCreation() {
             className="hero-img"
             width={800}
             height={400}
+            style={{ width: "auto", height: "auto" }}
+            priority
           />
           <h2>Make your MemeCoin dream come true!</h2>
           <p className="info">
@@ -135,19 +203,33 @@ export default function MemeCoinCreation() {
           <form className="meme-form">
             <div className="form-group">
               <label htmlFor="name">Coin Name</label>
-              <input type="text" id="name" placeholder="Enter coin name" />
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter coin name"
+                value={coinName}
+                onChange={(e) => setCoinName(e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label htmlFor="ticker">Ticker Symbol</label>
-              <input type="text" id="ticker" placeholder="E.g., MEME" />
+              <input
+                type="text"
+                id="ticker"
+                placeholder="E.g., MEME"
+                value={coinSymbol}
+                onChange={(e) => setCoinSymbol(e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label htmlFor="description">Description</label>
               <textarea
                 id="description"
-                placeholder="Describe your MemeCoin"></textarea>
+                placeholder="Describe your MemeCoin"
+                value={coinDescription}
+                onChange={(e) => setCoinDescription(e.target.value)}></textarea>
             </div>
 
             <div className="form-group">
@@ -162,15 +244,7 @@ export default function MemeCoinCreation() {
 
             {previewSrc && (
               <div className="preview">
-                {previewSrc.endsWith(".mp4") || previewSrc.includes("video") ? (
-                  <video controls src={previewSrc} className="preview-media" />
-                ) : (
-                  <img
-                    src={previewSrc}
-                    alt="Preview"
-                    className="preview-media"
-                  />
-                )}
+                <img src={previewSrc} alt="Preview" className="preview-media" />
               </div>
             )}
 

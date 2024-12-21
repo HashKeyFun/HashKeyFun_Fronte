@@ -14,6 +14,7 @@ import {
 } from "chart.js";
 import Payment from "../../../views/StupidCoin/Components/Payment";
 import "./pgaecss.css";
+import axios from "axios";
 
 ChartJS.register(
   CategoryScale,
@@ -30,6 +31,15 @@ export default function HashKeyExchange() {
   const [owned, setOwned] = useState<number>(0); // 보유한 HashKey Coin 개수
   const [price, setPrice] = useState<number>(100); // HashKey Coin의 현재 가격
   const [priceHistory, setPriceHistory] = useState<number[]>([]); // 가격 변동 기록
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}:5000/token/all`)
+      .then((res) => {
+        setPrice(parseFloat(res.data));
+        console.log(res.data);
+      });
+  }, [price]);
 
   // 가격 변동 및 기록 관리
   useEffect(() => {

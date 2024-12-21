@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Next.js의 useRouter 훅
 import "./pgaecss.css";
+import axios from "axios";
 
 const coins = [
   { name: "HashKey Gold", image: "/vercel.svg", price: "12.34" },
@@ -16,7 +17,17 @@ const coins = [
 export default function Exchange() {
   const router = useRouter(); // useRouter 훅 초기화
   const [prices, setPrices] = useState<number[]>(coins.map(() => 0));
+  const [mimCoin, setMimCoin] = useState<string[]>([]);
   const [priceChanges, setPriceChanges] = useState<string[]>([]);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}:5000/token/all`)
+      .then((res) => {
+        setMimCoin(res.data);
+        console.log(res.data);
+      });
+  }, []);
 
   useEffect(() => {
     const updatePrices = () => {
@@ -40,28 +51,24 @@ export default function Exchange() {
 
       <main>
         <section className="exchange">
-          {[...Array(5)].map((_, outerIndex) => (
-            <div key={outerIndex} className="coin-list">
-              {coins.map((coin, index) => (
-                <div
-                  key={index}
-                  className="coin-item"
-                  onClick={() => router.push(`/StupidCoin/${coin.name}`)} // 리다이렉션 구현
-                >
-                  <Image
-                    src={coin.image}
-                    alt={coin.name}
-                    className="coin-image"
-                    width={100}
-                    height={100}
-                  />
-                  <h3 className="coin-name">{coin.name}</h3>
-                  <p className="coin-price">
-                    ${prices[index].toFixed(2)}
-                    <span className="change">{priceChanges[index]}</span>
-                  </p>
-                </div>
-              ))}
+          {coins.map((coin, index) => (
+            <div
+              key={index}
+              className="coin-item"
+              onClick={() => router.push(`/StupidCoin/${coin.name}`)} // 리다이렉션 구현
+            >
+              <Image
+                src={coin.image}
+                alt={coin.name}
+                className="coin-image"
+                width={100}
+                height={100}
+              />
+              <h3 className="coin-name">{coin.name}</h3>
+              <p className="coin-price">
+                ${prices[index].toFixed(2)}
+                <span className="change">{priceChanges[index]}</span>
+              </p>
             </div>
           ))}
         </section>
