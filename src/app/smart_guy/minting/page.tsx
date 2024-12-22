@@ -82,7 +82,6 @@ export default function MemeCoinManagement() {
         TokenFactoryABI,
         signer
       );
-      console.log("Token Factory:", tokenFactory);
 
       // Convert amount to Wei (Ether to Wei conversion)
       const value = ethers.parseUnits(amount.toString(), "ether");

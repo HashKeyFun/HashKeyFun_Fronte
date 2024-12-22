@@ -283,7 +283,7 @@ export default function MemeCoinCreation() {
             <button
               type="button"
               className="cta-button"
-              onClick={() => (window.location.href = "/smart_guy")}>
+              onClick={() => (window.location.href = "/smart_guy/minting")}>
               🚀 Mintinglist
             </button>
           </form>
