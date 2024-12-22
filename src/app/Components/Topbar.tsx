@@ -35,11 +35,14 @@ export default function Topbar() {
     <div className="marquee">
       <span>🚨 Warning: This site is 100% real 🚨</span>
       <div className="move">
-        <h1>Metamask 연결하기</h1>
+        <h1>Metamask connect</h1>
         {!account ? (
-          <button onClick={connectWallet}>지갑 연결</button>
+          <button onClick={connectWallet}>Wallet connection</button>
         ) : (
-          <p>연결된 계정: {account}</p>
+          <p>
+            linked account
+            {account}
+          </p>
         )}
       </div>
     </div>

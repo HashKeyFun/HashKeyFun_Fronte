@@ -1,0 +1,129 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+}
+
+/* Header styles */
+.header {
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .title {
+  margin: 0;
+  font-size: 2em;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.connect-wallet-button {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 10px;
+}
+
+.connect-wallet-button:hover {
+  background-color: #005bb5;
+  transform: scale(1.05);
+}
+
+.connect-wallet-button:active {
+  background-color: #004494;
+}
+
+
+.header .title:hover {
+  color: #ffcc00;
+}
+
+.header p {
+  margin: 5px 0 0;
+  font-size: 1em;
+}
+
+/* Main content styles */
+.main {
+  padding: 20px;
+}
+
+.approved-coins-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.coin-item {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 250px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.coin-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.coin-image {
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.coin-description {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333;
+}
+
+.coin-created,
+.coin-contract,
+.coin-status {
+  font-size: 0.9em;
+  color: #555;
+  margin: 5px 0;
+}
+
+.coin-status {
+  font-weight: bold;
+  color: green;
+}
+
+/* Approve button styles */
+.approve-button {
+  display: block;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  margin: 20px auto;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.approve-button:hover {
+  background-color: #218838;
+}
+
+.approve-button:active {
+  background-color: #1e7e34;
+}

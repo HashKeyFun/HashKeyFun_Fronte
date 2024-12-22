@@ -15,6 +15,7 @@ export default function MemeCoinCreation() {
   const [coinName, setCoinName] = useState<string>("");
   const [coinSymbol, setCoinSymbol] = useState<string>("");
   const [coinDescription, setCoinDescription] = useState<string>("");
+  const [account, setAccount] = useState<string | null>(null); // 메타마스크 계정
 
   const TokenFactoryAddress = "0xb6Ead7E52EF0ae4225e2CF63F63669E2e6325286";
 
@@ -72,7 +73,22 @@ export default function MemeCoinCreation() {
       setPreviewSrc(null);
     }
   };
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      alert("MetaMask가 설치되지 않았습니다. MetaMask를 설치해주세요.");
+      return;
+    }
 
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setAccount(accounts[0]);
+      console.log("Connected account:", accounts[0]);
+    } catch (error) {
+      console.error("MetaMask 연결 중 에러 발생:", error);
+    }
+  };
   const handlePurchase = async () => {
     setIsPurchaseVisible(true);
   };
@@ -96,6 +112,10 @@ export default function MemeCoinCreation() {
 
     if (!window.ethereum) {
       alert("MetaMask is not installed. Please install MetaMask.");
+      return;
+    }
+    if (!account) {
+      alert("Please connect to MetaMask.");
       return;
     }
 
@@ -143,6 +163,7 @@ export default function MemeCoinCreation() {
             request_id: requestId,
             image: previewSrc, // Assuming this holds the uploaded image URL
             description: coinDescription,
+            creator: account,
           },
           {
             headers: {
@@ -199,7 +220,15 @@ export default function MemeCoinCreation() {
         </section>
 
         <section className="form-section">
+          {!account ? (
+            <button className="connect-wallet-button" onClick={connectWallet}>
+              Connect Wallet
+            </button>
+          ) : (
+            <p>Connected account: {account}</p>
+          )}
           <h2 className="section-title">MemeCoin Details</h2>
+
           <form className="meme-form">
             <div className="form-group">
               <label htmlFor="name">Coin Name</label>
@@ -248,11 +277,14 @@ export default function MemeCoinCreation() {
               </div>
             )}
 
+            <button type="button" className="cta-button" onClick={handleBuy}>
+              🚀 Create MemeCoin
+            </button>
             <button
               type="button"
               className="cta-button"
-              onClick={handlePurchase}>
-              🚀 Create MemeCoin
+              onClick={() => (window.location.href = "/smart_guy")}>
+              🚀 Mintinglist
             </button>
           </form>
         </section>
